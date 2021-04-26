@@ -38,7 +38,7 @@ class InfoDlgImpl : public QDialog, private Ui::InfoDlg
     
 public:
 
-    InfoDlgImpl(QWidget* parent, Qt::WFlags fl = 0);
+    InfoDlgImpl(QWidget* parent, Qt::WindowFlags fl = 0);
     virtual ~InfoDlgImpl();
     
     void setHTML(const QString& info);

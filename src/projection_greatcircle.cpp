@@ -21,7 +21,7 @@
 /*! \file    projection_greatcircle.cpp
     \author  Alexander Wemmer, alex@wemmer.at
 */
-#include <math.h>
+#include <cmath>
 #include <QPointF>
 
 #include "logger.h"
@@ -59,8 +59,8 @@ bool ProjectionGreatCircle::convertLatLonToXY(const QPointF& latlon_point, QPoin
     while (mypoint.y() > 180) mypoint.setY(mypoint.y() - 360);
     while (mypoint.y() < -180) mypoint.setY(mypoint.y() + 360);
 
-    if (mypoint.x() < -90 || mypoint.x() > 90 || isnan(mypoint.x()) ||
-        mypoint.y() < -180.0 || mypoint.y() > 180.0 || isnan(mypoint.y()))
+    if (mypoint.x() < -90 || mypoint.x() > 90 || std::isnan(mypoint.x()) ||
+        mypoint.y() < -180.0 || mypoint.y() > 180.0 || std::isnan(mypoint.y()))
     {
         Logger::log(QString("invalid LAT/LON: %1/%2").arg(mypoint.x()).arg(mypoint.y()));
         return false;

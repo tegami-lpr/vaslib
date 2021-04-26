@@ -30,7 +30,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-InfoDlgImpl::InfoDlgImpl(QWidget* parent, Qt::WFlags fl) : QDialog(parent, fl) 
+InfoDlgImpl::InfoDlgImpl(QWidget* parent, Qt::WindowFlags fl) : QDialog(parent, fl)
 {
     setupUi(this);
     infotext->setFontFamily("Courier");
