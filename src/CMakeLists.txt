@@ -14,7 +14,7 @@ if(WIN32)
     # Files to be included for P3D support
     file(GLOB P3D_SOURCES code_timer.cpp fsaccess_msfs.cpp fsuipc.cpp)
     file(GLOB P3D_HEADERS code_timer.h fsaccess_msfs.h fsuipc.h)
-    set(FSUIPC_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/FSUIPC/")
+    set(FSUIPC_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/FSUIPC")
     file(GLOB FSUIPC_FILES ${FSUIPC_INCLUDE_DIR}/FSUIPC_User.h ${FSUIPC_INCLUDE_DIR}/IPCuser.h ${FSUIPC_INCLUDE_DIR}/IPCuser.c)
 
 endif(WIN32)
@@ -30,20 +30,33 @@ file(GLOB COMMONXML_HEADERS xml.model.h)
 
 # Files to be included for vascharts
 # XXX: not used anymore?
-file(GLOB CHARTS_SOURCES chartwidget.cpp ge.cpp ge_projection.cpp ge_list.cpp ge_layers.cpp ge_rect.cpp
-        ge_label.cpp ge_vor.cpp ge_ndb.cpp ge_airport.cpp ge_intersection.cpp ge_route.cpp treebase.cpp
-        treebase_xml.cpp treebase_xml_chart.cpp chartmodel.cpp chart.xml.defines.cpp chart.elem.root.cpp
-        chart.elem.info.cpp chart.elem.projection.cpp chart.elem.navaids.cpp chart.elem.routes.cpp chart.elem.texts.cpp
-        chart.elem.navaid.cpp chart.elem.route.cpp chart.elem.text.cpp chart.elem.vor.cpp chart.elem.ndb.cpp
-        chart.elem.airport.cpp chart.elem.intersection.cpp chartinfodlgimpl.cpp routedlgimpl.cpp ge_textrect.cpp
-        waypointchoosedlgimpl.cpp textelemdlgimpl.cpp)
-file(GLOB CHARTS_HEADERS chartwidget.h ge.h ge_projection.h ge_list.h ge_layers.h ge_rect.h ge_label.h
-        ge_vor.h ge_ndb.h ge_airport.h ge_intersection.h ge_route.h treebase.h treebase_xml.h treebase_xml_chart.h
-        chartmodel.h chart.xml.defines.h chart.elem.root.h chart.elem.info.h chart.elem.projection.h chart.elem.navaids.h
-        chart.elem.routes.h chart.elem.texts.h chart.elem.navaid.h chart.elem.route.h chart.elem.text.h chart.elem.vor.h
-        chart.elem.ndb.h chart.elem.airport.h chart.elem.intersection.h chartinfodlgimpl.h waypointchoosedlgimpl.h anchor_latlon.h
-        termination_callback.h routedlgimpl.h ge_textrect.h waypointchoosedlgimpl.h textelemdlgimpl.h)
-file(GLOB CHARTS_UI chart.info.dlg.ui)
+if(CHARTS_SUPPORT)
+    set(CHARTS_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/charts")
+    file(GLOB CHARTS_SOURCES ${CHARTS_INCLUDE_DIR}/chartwidget.cpp ${CHARTS_INCLUDE_DIR}/ge.cpp ${CHARTS_INCLUDE_DIR}/ge_projection.cpp
+            ${CHARTS_INCLUDE_DIR}/ge_list.cpp ${CHARTS_INCLUDE_DIR}/ge_layers.cpp ${CHARTS_INCLUDE_DIR}/ge_rect.cpp
+            ${CHARTS_INCLUDE_DIR}/ge_label.cpp ${CHARTS_INCLUDE_DIR}/ge_vor.cpp ${CHARTS_INCLUDE_DIR}/ge_ndb.cpp
+            ${CHARTS_INCLUDE_DIR}/ge_airport.cpp ${CHARTS_INCLUDE_DIR}/ge_intersection.cpp ${CHARTS_INCLUDE_DIR}/ge_route.cpp
+            ${CHARTS_INCLUDE_DIR}/treebase.cpp ${CHARTS_INCLUDE_DIR}/treebase_xml.cpp ${CHARTS_INCLUDE_DIR}/treebase_xml_chart.cpp
+            ${CHARTS_INCLUDE_DIR}/chartmodel.cpp ${CHARTS_INCLUDE_DIR}/chart.xml.defines.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.root.cpp
+            ${CHARTS_INCLUDE_DIR}/chart.elem.info.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.projection.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.navaids.cpp
+            ${CHARTS_INCLUDE_DIR}/chart.elem.routes.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.texts.cpp
+            ${CHARTS_INCLUDE_DIR}/chart.elem.navaid.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.route.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.text.cpp
+            ${CHARTS_INCLUDE_DIR}/chart.elem.vor.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.ndb.cpp ${CHARTS_INCLUDE_DIR}/chart.elem.airport.cpp
+            ${CHARTS_INCLUDE_DIR}/chart.elem.intersection.cpp ${CHARTS_INCLUDE_DIR}/chartinfodlgimpl.cpp ${CHARTS_INCLUDE_DIR}/routedlgimpl.cpp
+            ${CHARTS_INCLUDE_DIR}/ge_textrect.cpp ${CHARTS_INCLUDE_DIR}/waypointchoosedlgimpl.cpp ${CHARTS_INCLUDE_DIR}/textelemdlgimpl.cpp)
+    file(GLOB CHARTS_HEADERS ${CHARTS_INCLUDE_DIR}/chartwidget.h ${CHARTS_INCLUDE_DIR}/ge.h ${CHARTS_INCLUDE_DIR}/ge_projection.h
+            ${CHARTS_INCLUDE_DIR}/ge_list.h ${CHARTS_INCLUDE_DIR}/ge_layers.h ${CHARTS_INCLUDE_DIR}/ge_rect.h ${CHARTS_INCLUDE_DIR}/ge_label.h
+            ${CHARTS_INCLUDE_DIR}/ge_vor.h ${CHARTS_INCLUDE_DIR}/ge_ndb.h ${CHARTS_INCLUDE_DIR}/ge_airport.h ${CHARTS_INCLUDE_DIR}/ge_intersection.h
+            ${CHARTS_INCLUDE_DIR}/ge_route.h ${CHARTS_INCLUDE_DIR}/treebase.h ${CHARTS_INCLUDE_DIR}/treebase_xml.h ${CHARTS_INCLUDE_DIR}/treebase_xml_chart.h
+            ${CHARTS_INCLUDE_DIR}/chartmodel.h ${CHARTS_INCLUDE_DIR}/chart.xml.defines.h ${CHARTS_INCLUDE_DIR}/chart.elem.root.h ${CHARTS_INCLUDE_DIR}/chart.elem.info.h
+            ${CHARTS_INCLUDE_DIR}/chart.elem.projection.h ${CHARTS_INCLUDE_DIR}/chart.elem.navaids.h ${CHARTS_INCLUDE_DIR}/chart.elem.routes.h
+            ${CHARTS_INCLUDE_DIR}/chart.elem.texts.h ${CHARTS_INCLUDE_DIR}/chart.elem.navaid.h ${CHARTS_INCLUDE_DIR}/chart.elem.route.h
+            ${CHARTS_INCLUDE_DIR}/chart.elem.text.h ${CHARTS_INCLUDE_DIR}/chart.elem.vor.h ${CHARTS_INCLUDE_DIR}/chart.elem.ndb.h
+            ${CHARTS_INCLUDE_DIR}/chart.elem.airport.h ${CHARTS_INCLUDE_DIR}/chart.elem.intersection.h ${CHARTS_INCLUDE_DIR}/chartinfodlgimpl.h
+            ${CHARTS_INCLUDE_DIR}/waypointchoosedlgimpl.h ${CHARTS_INCLUDE_DIR}/anchor_latlon.h ${CHARTS_INCLUDE_DIR}/termination_callback.h
+            ${CHARTS_INCLUDE_DIR}/routedlgimpl.h ${CHARTS_INCLUDE_DIR}/ge_textrect.h ${CHARTS_INCLUDE_DIR}/waypointchoosedlgimpl.h ${CHARTS_INCLUDE_DIR}/textelemdlgimpl.h)
+    file(GLOB CHARTS_UI ${CHARTS_INCLUDE_DIR}/chart.info.dlg.ui ${CHARTS_INCLUDE_DIR}/routedlg.ui ${CHARTS_INCLUDE_DIR}/waypointchoosedlg.ui ${CHARTS_INCLUDE_DIR}/textelemdlg.ui)
+endif(CHARTS_SUPPORT)
 
 # The files constituting vaslib itself
 file(GLOB VASLIB_SOURCES assert.cpp config.cpp configwidget.cpp logger.cpp pushbutton.cpp mouse_input_area.cpp smoothing.cpp
@@ -66,7 +79,7 @@ file(GLOB VASLIB_HEADERS ptrlist.h assert.h config.h configwidget.h logger.h mea
         fmc_data_provider.h bithandling.h noise_generator.h
         # vroute.h weather.h
         )
-file(GLOB VASLIB_UI waypointchoosedlg.ui routedlg.ui infodlg.ui chart.info.dlg.ui latlonpointdlg.ui pbdpointdlg.ui textelemdlg.ui)
+file(GLOB VASLIB_UI infodlg.ui latlonpointdlg.ui pbdpointdlg.ui)
 
 set_source_files_properties(${PROJECT_NAME}.rc PROPERTIES LANGUAGE RC)
 
