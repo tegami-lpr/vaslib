@@ -27,8 +27,8 @@
 
 #include <QObject>
 #include <QString>
-
-class QHttp;
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -88,6 +88,7 @@ signals:
 protected slots:
 
     void slotCmdFin(int id, bool error);
+    void requestFinished(QNetworkReply *reply);
 
 protected:
     
@@ -96,7 +97,7 @@ protected:
     
     QString m_airac_restriction_string;
 
-    QHttp* m_http;
+    QNetworkAccessManager *m_netManager;
     int m_last_id;
 
 private:

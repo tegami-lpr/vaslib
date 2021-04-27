@@ -22,7 +22,6 @@
     \author  Alexander Wemmer, alex@wemmer.at
 */
 
-#include <QFtp>
 #include <QRegExp>
 
 #include "assert.h"
@@ -42,7 +41,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-Weather::Weather(const QString& weather_config_filename) : m_ftp(0)
+Weather::Weather(const QString& weather_config_filename)
 {
     // init weather config
     m_weather_config = new Config(weather_config_filename);
@@ -50,13 +49,14 @@ Weather::Weather(const QString& weather_config_filename) : m_ftp(0)
     setupDefaultConfig();
     m_weather_config->loadfromFile();
     m_weather_config->saveToFile();
+    m_netManager = new QNetworkAccessManager(this);
+    connect(m_netManager, &QNetworkAccessManager::finished, this, &Weather::requestFinished);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
 Weather::~Weather()
 {
-    delete m_ftp;
     m_weather_config->saveToFile();
     delete m_weather_config;
 }
@@ -77,11 +77,11 @@ void Weather::setupDefaultConfig()
 
 void Weather::setupFtp()
 {
-    delete m_ftp;
-    m_ftp = new QFtp;
-    MYASSERT(m_ftp != 0);
-    MYASSERT(connect(m_ftp, SIGNAL(commandFinished(int, bool)), this, SLOT(slotCmdFin(int, bool))));
-    MYASSERT(connect(m_ftp, SIGNAL(readyRead()), this, SLOT(slotReadyRead())));
+//    delete m_ftp;
+//    m_ftp = new QFtp;
+//    MYASSERT(m_ftp != 0);
+//    MYASSERT(connect(m_ftp, SIGNAL(commandFinished(int, bool)), this, SLOT(slotCmdFin(int, bool))));
+//    MYASSERT(connect(m_ftp, SIGNAL(readyRead()), this, SLOT(slotReadyRead())));
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -109,12 +109,22 @@ void Weather::requestTAF(const QString& airport)
 
 void Weather::requestWeather(const QString airport, const QString& directory)
 {
-    setupFtp();
-    m_airport = airport.trimmed().toUpper();
-    m_ftp->connectToHost(m_weather_config->getValue(CFG_WEATHER_SERVER));
-    m_ftp->login();
-    m_ftp->cd(directory);
-    m_ftp->get(m_airport+m_weather_config->getValue(CFG_FILE_EXTENSION), 0, QFtp::Ascii);
+//    setupFtp();
+//    m_airport = airport.trimmed().toUpper();
+//    m_ftp->connectToHost(m_weather_config->getValue(CFG_WEATHER_SERVER));
+//    m_ftp->login();
+//    m_ftp->cd(directory);
+//    m_ftp->get(m_airport+m_weather_config->getValue(CFG_FILE_EXTENSION), 0, QFtp::Ascii);
+    QNetworkRequest request;
+    QString urlStr = "ftp://" + m_weather_config->getValue(CFG_WEATHER_SERVER)+ "/" + directory + "/" + m_airport + m_weather_config->getValue(CFG_FILE_EXTENSION);
+    request.setUrl(QUrl(urlStr));
+    QNetworkReply *reply = m_netManager->get(request);
+    //connect(reply, &QIODevice::readyRead, this, &Weather::slotReadyRead);
+    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [this, reply](){
+        emit signalError(reply->errorString());
+        Logger::log(QString("Weather:requestWeather: error occured (%1)").arg(reply->errorString()));
+        reply->deleteLater();
+    });
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -125,7 +135,7 @@ void Weather::slotCmdFin(int, bool error)
     
     if (error) 
     {
-        emit signalError(m_ftp->errorString());
+        //emit signalError(m_ftp->errorString());
         return;
     }
 }
@@ -134,7 +144,8 @@ void Weather::slotCmdFin(int, bool error)
 
 void Weather::slotReadyRead()
 {
-    QString raw_metar = m_ftp->readAll();
+    auto reply = dynamic_cast<QNetworkReply*>(this->sender());
+    QString raw_metar = reply->readAll();
 
     QRegExp weather_regexp(m_weather_config->getValue(CFG_RESULT_REGEXP));
     if (!weather_regexp.isValid())
@@ -154,5 +165,28 @@ void Weather::slotReadyRead()
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+void Weather::requestFinished(QNetworkReply *reply) {
+
+    QString raw_metar = reply->readAll();
+
+    QRegExp weather_regexp(m_weather_config->getValue(CFG_RESULT_REGEXP));
+    if (!weather_regexp.isValid())
+    {
+        emit signalError("Result RegExp is invalid");
+        return;
+    }
+
+    if (weather_regexp.indexIn(raw_metar) < 0)
+    {
+        emit signalError("RegExp did not match");
+        return;
+    }
+
+    emit signalGotWeather(m_airport, weather_regexp.cap(1), weather_regexp.cap(2));
+    m_airport.clear();
+
+    reply->deleteLater();
+}
 
 // End of file

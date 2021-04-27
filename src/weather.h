@@ -27,8 +27,9 @@
 
 #include <QObject>
 #include <QString>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
-class QFtp;
 class Config;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -56,6 +57,7 @@ protected slots:
 
     void slotCmdFin(int id, bool error);
     void slotReadyRead();
+    void requestFinished(QNetworkReply *reply);
 
 protected:
 
@@ -66,7 +68,7 @@ protected:
 protected:
 
     Config* m_weather_config;
-    QFtp* m_ftp;
+    QNetworkAccessManager *m_netManager;
     QString m_airport;
 
 private:

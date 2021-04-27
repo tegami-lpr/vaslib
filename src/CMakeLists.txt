@@ -71,8 +71,7 @@ file(GLOB VASLIB_SOURCES assert.cpp config.cpp configwidget.cpp logger.cpp pushb
         transport_layer_tcpclient.cpp transport_layer_tcpserver.cpp transport_layer_tcpserver_clientbuffer.cpp containerfactory.cpp
         containerbase.cpp infodlgimpl.cpp declination.cpp declination_geomag.cpp vas_path.cpp controller_throttle.cpp
         controller_speed.cpp fly_by_wire.cpp flight_mode_tracker.cpp statistics.cpp aircraft_data.cpp noise_generator.cpp
-        # vroute.cpp weather.cpp
-        )
+        vroute.cpp weather.cpp)
 file(GLOB VASLIB_HEADERS ptrlist.h assert.h config.h configwidget.h logger.h meanvalue.h median.h pushbutton.h
         mouse_input_area.h smoothing.h waypoint.h waypoint_hdg_to_alt.h waypoint_hdg_to_intercept.h airport.h
         runway.h intersection.h ndb.h vor.h ils.h holding.h route.h airway.h procedure.h procedure_serialization.h
@@ -81,9 +80,7 @@ file(GLOB VASLIB_HEADERS ptrlist.h assert.h config.h configwidget.h logger.h mea
         transport_layer_tcpclient.h transport_layer_tcpserver.h transport_layer_tcpserver_clientbuffer.h containerfactory.h
         containerbase.h infodlgimpl.h declination.h declination_geomag.h vas_path.h trend.h controller_base.h
         controller_throttle.h controller_speed.h fly_by_wire.h flight_mode_tracker.h statistics.h aircraft_data.h serialization_iface.h
-        fmc_data_provider.h bithandling.h noise_generator.h
-        # vroute.h weather.h
-        )
+        fmc_data_provider.h bithandling.h noise_generator.h vroute.h weather.h)
 file(GLOB VASLIB_UI infodlg.ui latlonpointdlg.ui pbdpointdlg.ui)
 
 set_source_files_properties(${PROJECT_NAME}.rc PROPERTIES LANGUAGE RC)

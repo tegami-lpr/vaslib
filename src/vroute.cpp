@@ -22,7 +22,6 @@
     \author  Alexander Wemmer, alex@wemmer.at
 */
 
-#include <QHttp>
 #include <QByteArray>
 #include <QDomDocument>
 #include <QDomElement>
@@ -36,19 +35,18 @@
 /////////////////////////////////////////////////////////////////////////////
 
 VRoute::VRoute(const QString& vroute_host, const QString& vroute_dir) : 
-    m_vroute_host(vroute_host), m_vroute_dir(vroute_dir), m_http(new QHttp), m_last_id(0)
+    m_vroute_host(vroute_host), m_vroute_dir(vroute_dir), m_last_id(0)
 {
-    MYASSERT(m_http != 0);
-    m_http->setHost(m_vroute_host);    
-    MYASSERT(connect(m_http, SIGNAL(requestFinished(int, bool)), this, SLOT(slotCmdFin(int, bool))));
+//    m_http->setHost(m_vroute_host);
+//    MYASSERT(connect(m_http, SIGNAL(requestFinished(int, bool)), this, SLOT(slotCmdFin(int, bool))));
+
+    m_netManager = new QNetworkAccessManager(this);
+    connect(m_netManager, &QNetworkAccessManager::finished, this, &VRoute::requestFinished);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-VRoute::~VRoute()
-{
-    delete m_http;
-}
+VRoute::~VRoute() = default;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -59,24 +57,24 @@ void VRoute::requestFP(const QString& adep, const QString& ades)
     if (!m_airac_restriction_string.isEmpty())
         path += QString("&cycle=%1").arg(m_airac_restriction_string);
 
-    m_last_id = m_http->get(path);
+    QNetworkRequest request;
+    QString urlStr = "http://" + m_vroute_host+ "/" + path;
+    request.setUrl(QUrl(urlStr));
+    QNetworkReply *reply = m_netManager->get(request);
+    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [this, reply](){
+        emit signalError(reply->errorString());
+        Logger::log(QString("VRoute:requestFP: error occured (%1)").arg(reply->errorString()));
+        reply->deleteLater();
+    });
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-void VRoute::slotCmdFin(int id, bool error)
+//void VRoute::slotCmdFin(int id, bool error)
+void VRoute::requestFinished(QNetworkReply *reply)
 {
-    if (id != m_last_id) return;
-
-    if (error)
-    {
-        emit signalError(m_http->errorString());
-        Logger::log(QString("VRoute:slotCmdFin: error occured (%s)").arg(m_http->errorString()));
-        return;
-    }
-
     QDomDocument xml_fp;
-    if (!xml_fp.setContent(m_http->readAll()))
+    if (!xml_fp.setContent(reply->readAll()))
     {
         emit signalError("Could not parse XML FP");
         Logger::log("VRoute:slotCmdFin: coult not parse XML");
