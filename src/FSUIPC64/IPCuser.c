@@ -11,8 +11,8 @@ With acknowledgements to Adam Szofran (author of original FS6IPC).
 #define MAX_SIZE 0x7F00 // Largest data (kept below 32k to avoid
 								// any possible 16-bit sign problems)
 
-#include "IPCuser64.h"
-#include "FSUIPC_User64.h"
+#include "IPCuser.h"
+#include "FSUIPC_User.h"
 
 #define FS6IPC_MSGNAME1      "FsasmLib:IPC" 
 

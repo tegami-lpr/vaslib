@@ -1,6 +1,6 @@
 #include <windows.h>
 
-#include "FSUIPC_User64.h"
+#include "FSUIPC_User.h"
 
 #define FS6IPC_MESSAGE_SUCCESS 1
 #define FS6IPC_MESSAGE_FAILURE 0
