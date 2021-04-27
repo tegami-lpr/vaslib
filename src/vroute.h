@@ -87,7 +87,6 @@ signals:
 
 protected slots:
 
-    void slotCmdFin(int id, bool error);
     void requestFinished(QNetworkReply *reply);
 
 protected:
