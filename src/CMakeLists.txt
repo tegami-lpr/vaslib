@@ -14,7 +14,12 @@ if(WIN32)
     # Files to be included for P3D support
     file(GLOB P3D_SOURCES code_timer.cpp fsaccess_msfs.cpp fsuipc.cpp)
     file(GLOB P3D_HEADERS code_timer.h fsaccess_msfs.h fsuipc.h)
-    set(FSUIPC_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/FSUIPC")
+
+    if ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+        set(FSUIPC_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/FSUIPC64")
+    else()
+        set(FSUIPC_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/FSUIPC")
+    endif()
     file(GLOB FSUIPC_FILES ${FSUIPC_INCLUDE_DIR}/FSUIPC_User.h ${FSUIPC_INCLUDE_DIR}/IPCuser.h ${FSUIPC_INCLUDE_DIR}/IPCuser.c)
 
 endif(WIN32)
