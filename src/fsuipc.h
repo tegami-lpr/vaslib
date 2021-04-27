@@ -22,7 +22,7 @@
 #define FSUIPC_HEADER__
 
 #include <windows.h>
-#include <stdio.h>
+#include <cstdio>
 
 #include "logger.h"
 

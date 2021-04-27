@@ -123,25 +123,25 @@ public:
     /////////////////////////////////////////////////////////////////////////////
 
     virtual const Route* asRoute() const { return this; }
-    virtual const Airway* asAirway() const { return 0; }
-    virtual const Procedure* asProcedure() const { return 0; }
-    virtual const Sid* asSID() const { return 0; }
-    virtual const Star* asSTAR() const { return 0; }
-    virtual const Transition* asTransition() const { return 0; }
-    virtual const Approach* asApproach() const { return 0; }
+    virtual const Airway* asAirway() const { return nullptr; }
+    virtual const Procedure* asProcedure() const { return nullptr; }
+    virtual const Sid* asSID() const { return nullptr; }
+    virtual const Star* asSTAR() const { return nullptr; }
+    virtual const Transition* asTransition() const { return nullptr; }
+    virtual const Approach* asApproach() const { return nullptr; }
 
     virtual Route* asRoute() { return this; }
-    virtual Airway* asAirway() { return 0; }
-    virtual Procedure* asProcedure() { return 0; }
-    virtual Sid* asSID() { return 0; }
-    virtual Star* asSTAR() { return 0; }
-    virtual Transition* asTransition() { return 0; }
-    virtual Approach* asApproach() { return 0; }
+    virtual Airway* asAirway() { return nullptr; }
+    virtual Procedure* asProcedure() { return nullptr; }
+    virtual Sid* asSID() { return nullptr; }
+    virtual Star* asSTAR() { return nullptr; }
+    virtual Transition* asTransition() { return nullptr; }
+    virtual Approach* asApproach() { return nullptr; }
 
     /////////////////////////////////////////////////////////////////////////////
 
     const QString& type() const { return m_type; }
-    void setType(QString type) { m_type = type; }
+    void setType(const QString &type) { m_type = type; }
 
     const QString& flag() const {  return m_flag; }
     //! when fixed == true, the flag will not be overwritten on copy, etc.

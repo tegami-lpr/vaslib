@@ -2173,7 +2173,7 @@ Waypoint* Navdata::parseLevelDProcedureWaypoint(const QDomElement& element,
 {
     if (element.nodeName() == "App_Transition")
     {
-        if (procedure.asApproach() == 0) return false;
+        if (procedure.asApproach() == 0) return nullptr;
 
         Transition* transition =
             new Transition(element.attributes().namedItem("Name").nodeValue().trimmed(),
@@ -2214,7 +2214,7 @@ Waypoint* Navdata::parseLevelDProcedureWaypoint(const QDomElement& element,
     }
     else if (element.nodeName() == "Sid_Transition")
     {
-        if (procedure.asSID() == 0) return false;
+        if (procedure.asSID() == nullptr) return nullptr;
 
         Transition* transition =
             new Transition(element.attributes().namedItem("Name").nodeValue().trimmed(),
@@ -2287,7 +2287,7 @@ Waypoint* Navdata::parseLevelDProcedureWaypoint(const QDomElement& element,
             if (procedure.asApproach() != 0 && procedure.count() > 0)
             {
                 Waypoint* last_procedure_wpt = procedure.waypoint(procedure.count()-1);
-                MYASSERT(last_procedure_wpt != 0);
+                MYASSERT(last_procedure_wpt != nullptr);
 
                 Holding holding;
                 holding.setHoldingTrack(element.namedItem("Hdg_Crs_value").toElement().text().toUInt());

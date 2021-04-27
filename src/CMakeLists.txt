@@ -8,17 +8,15 @@ set(CMAKE_AUTOUIC             ON)
 
 # Qt's components
 find_package(Qt5 COMPONENTS Core Gui Network Widgets Xml REQUIRED)
-set(QT_DEPS_LIBRARIES Qt5:Core Qt5:Gui Qt5::Network Qt5:Widgets Qt5:Xml)
-
-#file(GLOB HEADER_FILES *.h)
-#file(GLOB SOURCE_FILES *.cpp)
-#file(GLOB UI_FILES *.ui)
-#file(GLOB RC_FILES *.rc)
+set(QT_DEPS_LIBRARIES Qt5::Core Qt5::Gui Qt5::Network Qt5::Widgets Qt5::Xml)
 
 if(WIN32)
     # Files to be included for P3D support
     file(GLOB P3D_SOURCES code_timer.cpp fsaccess_msfs.cpp fsuipc.cpp)
-    file(GLOB P3D_HEADERS code_timer.h fsaccess_msfs.h fsuipc.h FSUIPC_User.h)
+    file(GLOB P3D_HEADERS code_timer.h fsaccess_msfs.h fsuipc.h)
+    set(FSUIPC_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/FSUIPC/")
+    file(GLOB FSUIPC_FILES ${FSUIPC_INCLUDE_DIR}/FSUIPC_User.h ${FSUIPC_INCLUDE_DIR}/IPCuser.h ${FSUIPC_INCLUDE_DIR}/IPCuser.c)
+
 endif(WIN32)
 
 if(XPLANE_SUPPORT)
@@ -73,15 +71,12 @@ file(GLOB VASLIB_UI waypointchoosedlg.ui routedlg.ui infodlg.ui chart.info.dlg.u
 set_source_files_properties(${PROJECT_NAME}.rc PROPERTIES LANGUAGE RC)
 
 add_library(${PROJECT_NAME} STATIC ${VASLIB_SOURCES} ${VASLIB_HEADERS} ${VASLIB_UI} ${P3D_HEADERS} ${P3D_SOURCES} ${UI_FILES} ${RC_FILES} )
-
-#XXX: cmake don't want add some Qt5 includes to target includes...
-include_directories(${Qt5Gui_INCLUDE_DIRS})
-include_directories(${Qt5Widgets_INCLUDE_DIRS})
-include_directories(${Qt5Xml_INCLUDE_DIRS})
+#add_library(${PROJECT_NAME} SHARED ${VASLIB_SOURCES} ${VASLIB_HEADERS} ${VASLIB_UI} ${P3D_HEADERS} ${P3D_SOURCES} ${FSUIPC_FILES} ${UI_FILES} ${RC_FILES} )
 
 target_link_libraries(${PROJECT_NAME}
-    ${QT_DEPS_LIBRARIES}
-)
+        ${QT_DEPS_LIBRARIES}
+        )
+target_include_directories(${PROJECT_NAME} PRIVATE ${FSUIPC_INCLUDE_DIR})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
