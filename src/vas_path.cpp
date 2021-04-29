@@ -20,16 +20,60 @@
 
 #include "vas_path.h"
 
-QString VasPath::m_path=".";
+#include <QApplication>
+#include <QDir>
+#include <QStandardPaths>
+
+//QString VasPath::m_path=".";
+QString VasPath::m_path;
 
 /////////////////////////////////////////////////////////////////////////////
 
-QString VasPath::prependPath(const QString &relativePath)
-{
+//QString VasPath::prependPath(const QString &relativePath)
+//{
+//    QString ret;
+//    QString tmpPath = QDir::fromNativeSeparators(relativePath);
+//    if (relativePath.isEmpty()) ret = m_path;
+//    else ret = m_path + (tmpPath[0] == '/' ? "" : "/") +  relativePath;
+//    return ret.trimmed();
+//}
+
+
+QString VasPath::prependPath(const QString &relativePath, VasPath::EDataPath pathType) {
+    QString dataPath;
+    if (m_path.isEmpty()) {
+        dataPath = getUserDataPath();
+        if (pathType == dpApp) {
+            dataPath = getAppDataPath();
+        }
+    } else {
+        dataPath = m_path;
+    }
+
     QString ret;
-    if (relativePath.isEmpty()) ret = m_path;
-    else ret = m_path + (relativePath[0] == '/' ? "" : "/") +  relativePath;
+    QString tmpPath = QDir::fromNativeSeparators(relativePath);
+    if (relativePath.isEmpty()) ret = dataPath;
+    else ret = dataPath + (tmpPath[0] == '/' ? "" : "/") +  relativePath;
     return ret.trimmed();
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+QString VasPath::getUserDataPath() {
+    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/vasFMC";
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+QString VasPath::getAppDataPath() {
+    //XXX: need some work on linux (if we will be support linux), because data can be stored anywhere in /usr or /usr/local, etc.
+    return QApplication::applicationDirPath();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool VasPath::checkUserDataPath() {
+    QDir dir(getUserDataPath());
+    if (dir.exists()) return true;
+    return dir.mkpath(dir.absolutePath());
+}

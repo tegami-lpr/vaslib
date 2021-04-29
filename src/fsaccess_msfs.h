@@ -7,7 +7,7 @@
 
 #include <QTime>
 
-#include "assert.h"
+#include "vlassert.h"
 #include "config.h"
 
 #include "fsuipc.h"

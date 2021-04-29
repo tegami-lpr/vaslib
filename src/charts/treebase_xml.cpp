@@ -23,7 +23,7 @@
 */
 
 #include "treebase_xml.h"
-#include "assert.h"
+#include "vlassert.h"
 /////////////////////////////////////////////////////////////////////////////
 
 TreeBaseXML::TreeBaseXML(TreeBaseXML* parent) : TreeBase(parent)

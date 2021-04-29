@@ -27,7 +27,7 @@
 
 #include <QDomElement>
 #include <QString>
-#include "assert.h"
+#include "vlassert.h"
 
 /////////////////////////////////////////////////////////////////////////////
 

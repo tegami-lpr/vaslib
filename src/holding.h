@@ -29,7 +29,7 @@
 #include <QDateTime>
 
 #include "serialization_iface.h"
-#include "assert.h"
+#include "vlassert.h"
 
 //! Holding definitions
 class Holding 

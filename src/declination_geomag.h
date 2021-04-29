@@ -79,7 +79,7 @@
 /* Comment out one of the two following lines, as applicable */
 #include <math.h>               /* for gcc */
 
-#include "assert.h"
+#include "vlassert.h"
 #include "waypoint.h"
 
 ///////////////////////////////////////////////////////////////////////////////

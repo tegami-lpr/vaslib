@@ -36,7 +36,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 
-#include "assert.h"
+#include "vlassert.h"
 #include "config.h"
 #include "projection.h"
 #include "navcalc.h"
@@ -940,7 +940,7 @@ void ChartWidget::paintEvent(QPaintEvent *event)
         if (variation != 0.0)
         {
             if (!second_left_line.isEmpty()) second_left_line +=", ";
-            second_left_line += QString("Var %1°%2").arg(qAbs(variation)).
+            second_left_line += QString("Var %1ï¿½%2").arg(qAbs(variation)).
                                 arg((variation < 0)? "E" : "W");
         }
         painter.drawText(header_rect, Qt::AlignLeft|Qt::AlignBottom, second_left_line);

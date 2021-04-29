@@ -25,7 +25,7 @@
 #ifndef MEDIAN_H
 #define MEDIAN_H
 
-#include "assert.h"
+#include "vlassert.h"
 #include "navcalc.h"
 
 /////////////////////////////////////////////////////////////////////////////

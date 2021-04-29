@@ -32,7 +32,7 @@
 #include <QDateTime>
 
 #include "logger.h"
-#include "assert.h"
+#include "vlassert.h"
 
 class QWidget;
 class QCursor;

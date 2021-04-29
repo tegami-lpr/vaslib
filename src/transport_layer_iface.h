@@ -29,7 +29,7 @@
 #include <QByteArray>
 #include <QAbstractSocket>
 
-#include "assert.h"
+#include "vlassert.h"
 
 //#include "serialization_layer_iface.h"
 

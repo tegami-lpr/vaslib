@@ -28,7 +28,7 @@
 #include <QDomDocument>
 
 #include "config.h"
-#include "assert.h"
+#include "vlassert.h"
 #include "airway.h"
 #include "waypoint.h"
 #include "airport.h"

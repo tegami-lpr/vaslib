@@ -18,7 +18,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "assert.h"
+#include "vlassert.h"
 #include "logger.h"
 #include "waypoint.h"
 #include "declination.h"

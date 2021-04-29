@@ -31,7 +31,7 @@
 #include <QFile>
 #include <QPair>
 
-#include "assert.h"
+#include "vlassert.h"
 #include "logger.h"
 
 typedef QPair<uint, uint> WeightToSpeedTuple;

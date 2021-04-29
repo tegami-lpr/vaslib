@@ -22,7 +22,7 @@
   \author  Mark Foti and Alexander Wemmer, alex@wemmer.at
 */
 
-#include "assert.h"
+#include "vlassert.h"
 #include "logger.h"
 
 #include "fsaccess.h"

@@ -28,7 +28,7 @@
 #include <QDomNodeList>
 
 #include "logger.h"
-#include "assert.h"
+#include "vlassert.h"
 
 #include "vroute.h"
 

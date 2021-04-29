@@ -26,7 +26,7 @@
 #include <QRegExp>
 #include <QApplication>
 
-#include "assert.h"
+#include "vlassert.h"
 #include "airport.h"
 #include "sid.h"
 #include "star.h"

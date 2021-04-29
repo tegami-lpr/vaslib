@@ -22,7 +22,7 @@
   \author  Alexander Wemmer, alex@wemmer.at
 */
 
-#include "assert.h"
+#include "vlassert.h"
 #include "ge.h"
 
 #include "ge_list.h"

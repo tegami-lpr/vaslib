@@ -21,7 +21,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "assert.h"
+#include "vlassert.h"
 #include <QString>
 #include <QMap>
 #include <QObject>
@@ -69,6 +69,9 @@ public:
     inline QStringList keyList() const { return m_data_map.keys(); }
 
     void checkKeyAndShowMessageBox(const QString& key) const;
+
+
+    static QString getConfigDir();
 
 signals:
 

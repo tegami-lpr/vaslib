@@ -25,7 +25,7 @@
 #ifndef PTRLIST_H
 #define PTRLIST_H
 
-#include "assert.h"
+#include "vlassert.h"
 #include <QList>
 
 /////////////////////////////////////////////////////////////////////////////

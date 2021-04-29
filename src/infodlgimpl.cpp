@@ -24,7 +24,7 @@
 
 #include <QFile>
 
-#include "assert.h"
+#include "vlassert.h"
 
 #include "infodlgimpl.h"
 

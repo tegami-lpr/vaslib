@@ -24,7 +24,7 @@
 
 #include <QRegExp>
 
-#include "assert.h"
+#include "vlassert.h"
 #include "logger.h"
 #include "config.h"
 

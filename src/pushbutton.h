@@ -25,7 +25,7 @@
 #ifndef PUSHBUTTON_H
 #define PUSHBUTTON_H
 
-#include "assert.h"
+#include "vlassert.h"
 #include <QPushButton>
 #include <QTimer>
 #include <QMouseEvent>

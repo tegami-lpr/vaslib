@@ -26,7 +26,7 @@
 #include "flight_mode_tracker.h"
 
 #include "logger.h"
-#include "assert.h"
+#include "vlassert.h"
 
 #include "flightstatus.h"
 #include "fmc_data_provider.h"

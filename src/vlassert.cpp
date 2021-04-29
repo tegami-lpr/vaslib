@@ -18,14 +18,35 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef ASSERT_H
-#define ASSERT_H
+#include "stdio.h"
+
+#include <QString>
+#include <QMessageBox>
+#include <QApplication>
+
+#include "vlassert.h"
+#include "logger.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
-void assertFailed(const char *file, const char* function, int line);
+void assertFailed(const char *file, const char* function, int line)
+{
+    Logger::log(QString("********** Assert failed in file %1, line %2, function %3\n").
+                arg(file).arg(line).arg(function));
 
-#define MYASSERT(expr) if (!(expr)) assertFailed(__FILE__, __FUNCTION__, __LINE__)
+#if! VASFMC_GAUGE
 
+    printf("********** Assert failed in file %s, line %d, function %s\n", file, line, function);
+    fflush(stdout);
+
+    QMessageBox::critical(0, "ASSERT FAILED", 
+			  QString("Assert failed in file %1, line %2, function %3").
+			  arg(QString(file)).arg(line).arg(QString(function)));
+
+    qFatal(QString("********** Assert failed in file %1, line %2, function %3").
+           arg(QString(file)).arg(line).arg(QString(function)).toLatin1().data());
+    
+	qApp->quit();
+    exit(1);
 #endif
-
+}

@@ -25,7 +25,7 @@
 #include <QFile>
 #include <QMetaObject>
 
-#include "assert.h"
+#include "vlassert.h"
 #include "config.h"
 #include "projection.h"
 #include "navdata.h"

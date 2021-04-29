@@ -24,7 +24,7 @@
 
 #include <QLineEdit>
 
-#include "assert.h"
+#include "vlassert.h"
 
 #include "chartmodel.h"
 #include "chart.elem.info.h"
