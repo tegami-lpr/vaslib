@@ -27,6 +27,8 @@
 //QString VasPath::m_path=".";
 QString VasPath::m_path;
 
+bool VasPath::m_isStandalone = false;
+
 /////////////////////////////////////////////////////////////////////////////
 
 //QString VasPath::prependPath(const QString &relativePath)
@@ -60,7 +62,7 @@ QString VasPath::prependPath(const QString &relativePath, VasPath::EDataPath pat
 /////////////////////////////////////////////////////////////////////////////
 
 QString VasPath::getUserDataPath() {
-    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/vasFMC";
+    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,4 +78,14 @@ bool VasPath::checkUserDataPath() {
     QDir dir(getUserDataPath());
     if (dir.exists()) return true;
     return dir.mkpath(dir.absolutePath());
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void VasPath::setStandalone() {
+    m_isStandalone = true;
+}
+
+bool VasPath::isStandalone() {
+    return m_isStandalone;
 }

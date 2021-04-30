@@ -70,9 +70,6 @@ public:
 
     void checkKeyAndShowMessageBox(const QString& key) const;
 
-
-    static QString getConfigDir();
-
 signals:
 
     void signalChanged();

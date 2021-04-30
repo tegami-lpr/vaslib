@@ -211,7 +211,7 @@ bool Config::saveToFile()
     //Logger::log(QString("Config:saveToFile: (%1/%2)").arg(QDir::current().dirName()).arg(m_filename));
 
     QFile file(m_filename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) 
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         Logger::log(QString("Config:saveToFile: Could not open file %1\n%2").arg(m_filename).arg(file.errorString()));
         file.close();

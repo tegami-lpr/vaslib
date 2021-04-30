@@ -37,21 +37,29 @@ public:
     static void setPath(const QString &path) { m_path = path.trimmed(); }
     static const QString& getPath() { return m_path; }
 
-//    static QString prependPath(const QString &relativePath);
+    //! Function set standalone sign, forcing app to find data files in app directory
+    static void setStandalone();
+
+    //! Function return standalone flag
+    static bool isStandalone();
 
     //! Function prepend \param relativePath by path where data is stored
+//    static QString prependPath(const QString &relativePath);
     static QString prependPath(const QString &relativePath, EDataPath pathType = dpUser);
 
     //! Returns path to user writable directory for app configs
     static QString getUserDataPath();
+
     //! Returns path to static (non writable) app data
     static QString getAppDataPath();
+
     //! Function check and create if needed user data path
     static bool checkUserDataPath();
 
 private:
 
     static QString m_path;
+    static bool m_isStandalone;
 };
 
 #endif // VAS_PATH_H
