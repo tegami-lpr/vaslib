@@ -35,7 +35,8 @@
 Config::Config(const QString& filename, const QString& separator)
 {
     if (filename.length() <= 0) qFatal("Config: filename empty");
-    m_filename = VasPath::prependPath(filename);
+    //m_filename = VasPath::prependPath(filename);
+    m_filename = filename;
   
     if (separator.length() <= 0) qFatal("Config: separator empty");
     m_separator = separator;

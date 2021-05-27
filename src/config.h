@@ -44,7 +44,7 @@ public:
     };
     
     //! The filename shall be specified as a relative path (relative to the vasFMC directory)
-    Config(const QString& filename, const QString& separator = "=");
+    explicit Config(const QString& filename, const QString& separator = "=");
 
     void setValue(const QString& key, const QString& value);    
     void setValue(const QString& key, const int& value);
@@ -91,8 +91,8 @@ class ConfigWidgetProvider
 {
 public:
 
-    ConfigWidgetProvider() {};
-    virtual ~ConfigWidgetProvider() {};
+    ConfigWidgetProvider() = default;;
+    virtual ~ConfigWidgetProvider() = default;;
 
     virtual void registerConfigWidget(const QString& title, Config* cfg) = 0;
     virtual void unregisterConfigWidget(const QString& title) = 0;

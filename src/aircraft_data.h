@@ -49,10 +49,10 @@ class AircraftData : public QObject
 
 public:
     //! Standard Constructor
-    AircraftData(const FlightStatus* flightstatus);
+    explicit AircraftData(const FlightStatus* flightstatus);
 
     //! Destructor
-    virtual ~AircraftData() {};
+    ~AircraftData() override = default;
 
     void clear();
 
