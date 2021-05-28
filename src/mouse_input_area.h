@@ -47,7 +47,7 @@ public:
     InputArea() : 
         m_repeat_period_ms(0), m_long_click_delay_ms(0), m_mouse_buttons(Qt::LeftButton) {};
 
-    InputArea(const QString& name) : 
+    explicit InputArea(const QString& name) :
         m_name(name), m_repeat_period_ms(0), m_long_click_delay_ms(0), m_mouse_buttons(Qt::LeftButton)
     {
         MYASSERT(!name.isEmpty());
@@ -64,7 +64,7 @@ public:
     };
     
     //! Destructor
-    virtual ~InputArea() {};
+    virtual ~InputArea() = default;;
 
     const QString& name() const { return m_name; }
     uint repeatPeriodMs() const { return m_repeat_period_ms; }
@@ -102,7 +102,7 @@ public:
     };
 
     //! Destructor
-    virtual ~MouseInputArea() {};
+    ~MouseInputArea() override = default;
 
     //! clears all area definitions and resets all values
     void clear();
