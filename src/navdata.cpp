@@ -61,16 +61,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-#define AIRAC_WAYPOINT_FILENAME_DEFAULT "navdata/waypoints.txt"
-#define AIRAC_AIRWAY_FILENAME_DEFAULT "navdata/ats.txt"
-#define AIRAC_AIRPORT_FILENAME_DEFAULT "navdata/airports.txt"
-#define AIRAC_NAVAID_FILENAME_DEFAULT "navdata/navaids.txt"
-#define AIRAC_SID_SUBDIR_DEFAULT "navdata/sid"
-#define AIRAC_STAR_SUBDIR_DEFAULT "navdata/star"
-#define AIRAC_LEVELD_PROCEDURES_SUBDIR_DEFAULT "navdata/leveld_proc"
-
-/////////////////////////////////////////////////////////////////////////////
-
 #define AIRAC_CYCLE_RECORD_PREFIX 'X'
 #define AIRPORT_RECORD_PREFIX 'A'
 #define RUNWAY_RECORD_PREFIX 'R'
@@ -180,16 +170,24 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-Navdata::Navdata(const QString& navdata_config_filename, const QString& navdata_index_config_filename) :
-    m_valid(false), m_navdata_config(0), m_navdata_index_config(0),
-    m_waypoint_file(0), m_airway_file(0), m_airport_file(0), m_navaid_file(0)
+QLatin1String AIRAC_AIRPORT_FILENAME = QLatin1String("airports.txt");
+QLatin1String AIRAC_AIRWAY_FILENAME = QLatin1String("ats.txt");
+QLatin1String AIRAC_LEVELD_PROCEDURES_SUBDIR = QLatin1String("leveld_proc");
+QLatin1String AIRAC_NAVAID_FILENAME = QLatin1String("navaids.txt");
+QLatin1String AIRAC_SID_SUBDIR = QLatin1String("sid");
+QLatin1String AIRAC_STAR_SUBDIR = QLatin1String("star");
+QLatin1String AIRAC_WAYPOINT_FILENAME = QLatin1String("waypoints.txt");
+
+/////////////////////////////////////////////////////////////////////////////
+
+Navdata::Navdata(const QString& navdata_dir, const QString& navdata_index_config_filename) :
+    m_valid(false), m_navdata_index_config(nullptr), m_waypoint_file(nullptr),
+    m_airway_file(nullptr), m_airport_file(nullptr), m_navaid_file(nullptr)
 {
+    m_navdataRootDir = navdata_dir;
+
     Logger::log("Navdata: init");
-
-    // init navdata config
-
-    m_navdata_config = new Config(navdata_config_filename);
-    MYASSERT(m_navdata_config);
+    Logger::log(QString("Navdata: root dir is %1").arg(m_navdataRootDir));
 
     // init navdata index config
 
@@ -199,7 +197,6 @@ Navdata::Navdata(const QString& navdata_config_filename, const QString& navdata_
     // setup configs
 
     setupDefaultConfig();
-    m_navdata_config->loadfromFile();
     m_navdata_index_config->loadfromFile();
 
     // setup database
@@ -239,7 +236,7 @@ Navdata::Navdata(const QString& navdata_config_filename, const QString& navdata_
     MYASSERT(extractAiracCycle());
     MYASSERT(setupIndexes());
     m_valid = true;
-    m_navdata_config->saveToFile();
+    //m_navdata_config->saveToFile();
     m_navdata_index_config->saveToFile();
     Logger::log("Navdata: init complete");
 };
@@ -248,15 +245,6 @@ Navdata::Navdata(const QString& navdata_config_filename, const QString& navdata_
 
 void Navdata::setupDefaultConfig()
 {
-    MYASSERT(m_navdata_config != 0);
-    m_navdata_config->setValue(CFG_AIRPORT_FILENAME, AIRAC_AIRPORT_FILENAME_DEFAULT);
-    m_navdata_config->setValue(CFG_WAYPOINT_FILENAME, AIRAC_WAYPOINT_FILENAME_DEFAULT);
-    m_navdata_config->setValue(CFG_AIRWAY_FILENAME, AIRAC_AIRWAY_FILENAME_DEFAULT);
-    m_navdata_config->setValue(CFG_NAVAID_FILENAME, AIRAC_NAVAID_FILENAME_DEFAULT);
-    m_navdata_config->setValue(CFG_SID_SUBDIR, AIRAC_SID_SUBDIR_DEFAULT);
-    m_navdata_config->setValue(CFG_STAR_SUBDIR, AIRAC_STAR_SUBDIR_DEFAULT);
-    m_navdata_config->setValue(CFG_LEVELD_PROCEDURES_SUBDIR, AIRAC_LEVELD_PROCEDURES_SUBDIR_DEFAULT);
-
     MYASSERT(m_navdata_index_config != 0);
     m_navdata_index_config->setValue(CFG_AIRAC_CYCLE_TITLE, "");
     m_navdata_index_config->setValue(CFG_AIRAC_CYCLE_DATES, "");
@@ -272,7 +260,8 @@ bool Navdata::setupFiles()
 {
     // airport file
 
-    m_airport_file = new QFile(VasPath::prependPath(m_navdata_config->getValue(CFG_AIRPORT_FILENAME)));
+    auto airportFilePath = prependPath(AIRAC_AIRPORT_FILENAME);
+    m_airport_file = new QFile(airportFilePath);
     MYASSERT(m_airport_file);
 
     if (!m_airport_file->open(QIODevice::ReadOnly | QIODevice::Text))
@@ -281,7 +270,7 @@ bool Navdata::setupFiles()
                     arg(m_airport_file->fileName()));
 
 #if! VASFMC_GAUGE
-        QMessageBox::critical(0, "Navdata init",
+        QMessageBox::critical(nullptr, "Navdata init",
                               QString("Could not open airport file %1").
                               arg(m_airport_file->fileName()));
 #endif
@@ -289,8 +278,8 @@ bool Navdata::setupFiles()
     }
 
     // waypoint file
-
-    m_waypoint_file = new QFile(VasPath::prependPath(m_navdata_config->getValue(CFG_WAYPOINT_FILENAME)));
+    auto  waypointFilePath = prependPath(AIRAC_WAYPOINT_FILENAME);
+    m_waypoint_file = new QFile(waypointFilePath);
     MYASSERT(m_waypoint_file);
 
     if (!m_waypoint_file->open(QIODevice::ReadOnly | QIODevice::Text))
@@ -299,7 +288,7 @@ bool Navdata::setupFiles()
                     arg(m_waypoint_file->fileName()));
 
 #if! VASFMC_GAUGE
-        QMessageBox::critical(0, "Navdata init",
+        QMessageBox::critical(nullptr, "Navdata init",
                               QString("Could not open waypoint file %1").
                               arg(m_waypoint_file->fileName()));
 #endif
@@ -307,8 +296,8 @@ bool Navdata::setupFiles()
     }
 
     // airway file
-
-    m_airway_file = new QFile(VasPath::prependPath(m_navdata_config->getValue(CFG_AIRWAY_FILENAME)));
+    auto airwayFilePath = prependPath(AIRAC_AIRWAY_FILENAME);
+    m_airway_file = new QFile(airwayFilePath);
     MYASSERT(m_airway_file);
 
     if (!m_airway_file->open(QIODevice::ReadOnly | QIODevice::Text))
@@ -325,8 +314,8 @@ bool Navdata::setupFiles()
     }
 
     // navaid file
-
-    m_navaid_file = new QFile(VasPath::prependPath(m_navdata_config->getValue(CFG_NAVAID_FILENAME)));
+    auto navaidFilePath = prependPath(AIRAC_NAVAID_FILENAME);
+    m_navaid_file = new QFile(navaidFilePath);
     MYASSERT(m_navaid_file);
 
     if (!m_navaid_file->open(QIODevice::ReadOnly | QIODevice::Text))
@@ -335,7 +324,7 @@ bool Navdata::setupFiles()
                     arg(m_navaid_file->fileName()));
 
 #if! VASFMC_GAUGE
-        QMessageBox::critical(0, "Navdata init",
+        QMessageBox::critical(nullptr, "Navdata init",
                               QString("Could not open navaid file %1").
                               arg(m_navaid_file->fileName()));
 #endif
@@ -1814,15 +1803,15 @@ uint Navdata::getProcedures(const QString& airport, const QString& wanted_type, 
     MYASSERT(!airport.isEmpty());
     procedures.clear();
 
-    QFile* procfile = 0;
+    QFile* procfile = nullptr;
 
-    if (wanted_type == Route::TYPE_SID)
-        procfile = new QFile(VasPath::prependPath(m_navdata_config->getValue(CFG_SID_SUBDIR)+
-                                                  "/"+airport.toLower()+PROCEDURE_FILE_EXT));
-    else if (wanted_type == Route::TYPE_STAR)
-        procfile = new QFile(VasPath::prependPath(m_navdata_config->getValue(CFG_STAR_SUBDIR)+
-                                                  "/"+airport.toLower()+PROCEDURE_FILE_EXT));
-    else
+    if (wanted_type == Route::TYPE_SID) {
+        QString sidFilePath = prependPath(AIRAC_SID_SUBDIR) + "/" + airport.toLower() + PROCEDURE_FILE_EXT;
+        procfile = new QFile(sidFilePath);
+    } else if (wanted_type == Route::TYPE_STAR) {
+        QString starFilePath = prependPath(AIRAC_STAR_SUBDIR) + "/" + airport.toLower() + PROCEDURE_FILE_EXT;
+        procfile = new QFile(starFilePath);
+    } else
         return 0;
 
     MYASSERT(procfile);
@@ -1849,10 +1838,9 @@ uint Navdata::getProcedures(const QString& airport, const QString& wanted_type, 
         return 0;
     }
 
-    if (!procfile->open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if (!procfile->open(QIODevice::ReadOnly | QIODevice::Text)) {
 #if! VASFMC_GAUGE
-        QMessageBox::critical(0, "Navdata init",
+        QMessageBox::critical(nullptr, "Navdata init",
                               QString("Could not open airport file %1").
                               arg(procfile->fileName()));
 #endif
@@ -1864,8 +1852,7 @@ uint Navdata::getProcedures(const QString& airport, const QString& wanted_type, 
 
     while(!procfile->atEnd())
     {
-        QByteArray line_array = procfile->readLine();
-        QString line(line_array);
+        QString line(procfile->readLine());
         line = line.trimmed();
         if (line.isEmpty()) continue;
         line = line.toUpper();
@@ -1879,8 +1866,7 @@ uint Navdata::getProcedures(const QString& airport, const QString& wanted_type, 
 
         while(!procfile->atEnd())
         {
-            QByteArray line_array = procfile->readLine();
-            QString line(line_array);
+            line = QString(procfile->readLine());
             line = line.trimmed();
             if (line.isEmpty()) break;
             line = line.toUpper();
@@ -1905,7 +1891,7 @@ uint Navdata::getProcedures(const QString& airport, const QString& wanted_type, 
         else
         {
             delete procedure;
-            procedure = 0;
+            procedure = nullptr;
         }
 
         //Logger::log(QString("Navdata:getProcedures: added proc (%1)").arg(procedure->toString()));
@@ -2019,8 +2005,8 @@ uint Navdata::getLevelDProcedures(const QString& airport,
 
     if (!m_airport_to_leveld_procedure_chache_map.contains(airport))
     {
-        QFile procfile(VasPath::prependPath(m_navdata_config->getValue(CFG_LEVELD_PROCEDURES_SUBDIR)+
-                                            "/"+airport.toLower()+LEVELD_PROCEDURE_FILE_EXT));
+        QString procFilePath = prependPath(AIRAC_LEVELD_PROCEDURES_SUBDIR) + "/" + airport.toLower() + LEVELD_PROCEDURE_FILE_EXT;
+        QFile procfile(procFilePath);
         bool procedure_opened = true;
 
         if (!procfile.open(QIODevice::ReadOnly))
@@ -2710,3 +2696,7 @@ void Navdata::renameNavdataFilenamesToLower(const QString& relative_path) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+QString Navdata::prependPath(const QString &filename) const {
+    return m_navdataRootDir + "/" + filename;
+}

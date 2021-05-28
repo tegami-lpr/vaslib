@@ -35,7 +35,6 @@
 Config::Config(const QString& filename, const QString& separator)
 {
     if (filename.length() <= 0) qFatal("Config: filename empty");
-    //m_filename = VasPath::prependPath(filename);
     m_filename = filename;
   
     if (separator.length() <= 0) qFatal("Config: separator empty");
@@ -169,7 +168,9 @@ bool Config::loadfromFile()
 {
     //Logger::log(QString("Config:loadfromFile: (%1)").arg(m_filename));
 
-    QFile file(m_filename);
+    QString filePath = VasPath::prependPath(m_filename, VasPath::dpAuto);
+
+    QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) 
     {
         Logger::log(QString("Config:loadfromFile: Could not open file %1\n%2").arg(m_filename).arg(file.errorString()));
@@ -211,10 +212,12 @@ bool Config::saveToFile()
 {
     //Logger::log(QString("Config:saveToFile: (%1/%2)").arg(QDir::current().dirName()).arg(m_filename));
 
-    QFile file(m_filename);
+    QString filePath = VasPath::prependPath(m_filename, VasPath::dpUser);
+
+    QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
-        Logger::log(QString("Config:saveToFile: Could not open file %1\n%2").arg(m_filename).arg(file.errorString()));
+        Logger::log(QString("Config:saveToFile: Could not open file %1\n%2").arg(filePath).arg(file.errorString()));
         file.close();
         return false;
     }

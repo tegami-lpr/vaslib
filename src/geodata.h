@@ -44,7 +44,7 @@ public:
     GeoData();
 
     //! Destructor
-    virtual ~GeoData();
+    ~GeoData() override;
 
     //! Filenames shall be specified as relative paths (relative to vasFMC directory)
     void setFilenames(const QStringList& filename_list) { m_filename_list = filename_list; }

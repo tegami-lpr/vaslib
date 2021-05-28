@@ -63,12 +63,10 @@ class Navdata : public QObject
 
 public:
 
-    Navdata(const QString& navdata_config_filename, const QString& navdata_index_config_filename);
-    virtual ~Navdata();
+    Navdata(const QString& navdata_dir, const QString& navdata_index_config_filename);
+    ~Navdata() override;
 
     void setupDefaultConfig();
-
-    inline Config* config() { return m_navdata_config; }
 
     inline bool isValid() const { return m_valid; }
 
@@ -242,9 +240,12 @@ protected:
 
 protected:
 
+    //! Root directory for navdata files
+    QString m_navdataRootDir;
+
     bool m_valid;
 
-    Config *m_navdata_config;
+//    Config *m_navdata_config;
     Config *m_navdata_index_config;
 
     QString m_airac_cycle_title;
@@ -269,6 +270,8 @@ protected:
     mutable QMap<QString, QDomDocument> m_airport_to_leveld_procedure_chache_map;
 
 private:
+    //! Function prepend given file name with Navaid root path
+    QString prependPath(const QString &filename) const;
 
 };
 

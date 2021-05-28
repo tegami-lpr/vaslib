@@ -30,12 +30,19 @@ class VasPath
 public:
 
     enum EDataPath {
+        //! User config path
         dpUser = 0,
-        dpApp = 1
+        //! App install dir path
+        dpApp = 1,
+        //! Auto - prefer user path if exists
+        dpAuto = 2
     };
 
     static void setPath(const QString &path) { m_path = path.trimmed(); }
     static const QString& getPath() { return m_path; }
+
+    //! Function check is appdir is writable
+    static void checkStanalone();
 
     //! Function set standalone sign, forcing app to find data files in app directory
     static void setStandalone();
@@ -55,6 +62,8 @@ public:
 
     //! Function check and create if needed user data path
     static bool checkUserDataPath();
+
+
 
 private:
 

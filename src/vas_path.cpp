@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QStandardPaths>
+#include <QFileInfo>
 
 //QString VasPath::m_path=".";
 QString VasPath::m_path;
@@ -43,14 +44,54 @@ bool VasPath::m_isStandalone = false;
 
 QString VasPath::prependPath(const QString &relativePath, VasPath::EDataPath pathType) {
     QString dataPath;
-    if (m_path.isEmpty()) {
-        dataPath = getUserDataPath();
-        if (pathType == dpApp) {
-            dataPath = getAppDataPath();
+    do {
+        if (!m_path.isEmpty()) {
+            dataPath = m_path;
+            break;
         }
-    } else {
-        dataPath = m_path;
-    }
+
+        if (isStandalone() || pathType == dpApp) {
+            dataPath = getAppDataPath();
+            break;
+        }
+
+        if (pathType == dpAuto) {
+            QString userDirPath = prependPath(relativePath, dpUser);
+            QFileInfo info(userDirPath);
+            if (info.exists()) return userDirPath;
+
+            QString appDirPath = prependPath(relativePath, dpApp);
+            info.setFile(appDirPath);
+            if (info.exists()) return appDirPath;
+
+            //if all fail, then return path relative to user dir
+            return userDirPath;
+        }
+
+        dataPath = getUserDataPath();
+
+    } while(false);
+
+//    if (m_path.isEmpty()) {
+//        dataPath = getUserDataPath();
+//        if (pathType == dpApp) {
+//            dataPath = getAppDataPath();
+//        }
+//        if (pathType == dpAuto) {
+//            QString userDirPath = prependPath(relativePath, dpUser);
+//            QFileInfo info(userDirPath);
+//            if (info.exists()) return userDirPath;
+//
+//            QString appDirPath = prependPath(relativePath, dpApp);
+//            info.setFile(appDirPath);
+//            if (info.exists()) return appDirPath;
+//
+//            //if all fail, then return path relative to user dir
+//            return userDirPath;
+//        }
+//    } else {
+//        dataPath = m_path;
+//    }
 
     QString ret;
     QString tmpPath = QDir::fromNativeSeparators(relativePath);
@@ -62,13 +103,14 @@ QString VasPath::prependPath(const QString &relativePath, VasPath::EDataPath pat
 /////////////////////////////////////////////////////////////////////////////
 
 QString VasPath::getUserDataPath() {
+    if (!m_path.isEmpty()) return m_path;
+    if (isStandalone()) return getAppDataPath();
     return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
 QString VasPath::getAppDataPath() {
-    //XXX: need some work on linux (if we will be support linux), because data can be stored anywhere in /usr or /usr/local, etc.
     return QApplication::applicationDirPath();
 }
 
@@ -88,4 +130,13 @@ void VasPath::setStandalone() {
 
 bool VasPath::isStandalone() {
     return m_isStandalone;
+}
+
+void VasPath::checkStanalone() {
+    QDir dir(getAppDataPath());
+    QFile tmpFile(dir.absolutePath() + "/tmp.tmp");
+    bool res = tmpFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Unbuffered);
+    m_isStandalone = res;
+    tmpFile.close();
+    tmpFile.remove();
 }

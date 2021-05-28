@@ -36,15 +36,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-GeoData::GeoData()
-{
-}
+GeoData::GeoData() = default;
 
 /////////////////////////////////////////////////////////////////////////////
 
-GeoData::~GeoData()
-{
-}
+GeoData::~GeoData() = default;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -58,25 +54,24 @@ bool GeoData::readData(uint filter_level)
 
     long wpt_count = 0;
 
-    QStringList::const_iterator iter = m_filename_list.begin();
-    for(; iter != m_filename_list.end(); ++iter)
-    {
-        QFile file(VasPath::prependPath(*iter));
+    for (const auto& fileName : m_filename_list) {
+        QString filePath = VasPath::prependPath(fileName, VasPath::dpAuto);
+        QFile file(filePath);
         if (!file.exists())
         {
-            Logger::log(QString("GeoData:readData: file not found (%1)").arg(*iter));
+            Logger::log(QString("GeoData:readData: file not found (%1)").arg(filePath));
             ret = false;
             continue;
         }
 
         if (!file.open(QIODevice::ReadOnly))
         {
-            Logger::log(QString("GeoData:readData: could not open file for reading (%1)").arg(*iter));
+            Logger::log(QString("GeoData:readData: could not open file for reading (%1)").arg(filePath));
             ret = false;
             continue;
         }
 
-        Route* current_route = 0;
+        Route* current_route = nullptr;
 
         while(!file.atEnd())
         {
