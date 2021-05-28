@@ -47,8 +47,7 @@ FSAccessMsFs::FSAccessMsFs(ConfigWidgetProvider* config_widget_provider,
     m_fsuipc(new FSUIPC),
     m_flaps_inc_per_notch(0)
 {
-    MYASSERT(config_widget_provider != 0);
-    MYASSERT(m_fsuipc != 0);
+    MYASSERT(config_widget_provider != nullptr);
 
     MYASSERT(sizeof(char) == 1);
     MYASSERT(sizeof(short) == 2);
@@ -79,8 +78,7 @@ FSAccessMsFs::FSAccessMsFs(ConfigWidgetProvider* config_widget_provider,
 
 /////////////////////////////////////////////////////////////////////////////
 
-FSAccessMsFs::~FSAccessMsFs()
-{
+FSAccessMsFs::~FSAccessMsFs() {
     freeThrottleAxes();
     freeControlAxes();
     m_fsuipc->process();

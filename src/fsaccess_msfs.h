@@ -5,13 +5,14 @@
 #ifndef MSFS_FSACCESS_H
 #define MSFS_FSACCESS_H
 
-#include <QTime>
-
 #include "vlassert.h"
 #include "config.h"
 
 #include "fsuipc.h"
 #include "fsaccess.h"
+
+#include <cmath>
+#include <QTime>
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,11 +52,11 @@ typedef struct _MSFS_TCAS_DATA
     // Zero in FS2002, a status indication in FS2004�see list below.
     qint8 bState;
 
-    // the COM1 frequency set in the AI aircraft�s radio. (0Xaabb as in 1aa.bb)
+    // the COM1 frequency set in the AI aircraft`s radio. (0Xaabb as in 1aa.bb)
     qint16 com1;
 
     // Constructor
-    _MSFS_TCAS_DATA() : id(0), lat(0.0), lon(0.0), alt(0), hdg(0), gs(0), vs(0), bState(0), com1(0) {};
+    _MSFS_TCAS_DATA() : id(0), lat(0.0), lon(0.0), alt(0), hdg(0), gs(0), vs(0), idATC{}, bState(0), com1(0) {};
 
     //convert
     void writeToTcasEntry(TcasEntry& entry)
@@ -63,7 +64,8 @@ typedef struct _MSFS_TCAS_DATA
         entry.m_valid = true;
         entry.m_id = id;
         entry.m_position = Waypoint("TCAS", QString::null, lat, lon);
-        entry.m_altitude_ft = (int)(alt + 0.5);
+        //entry.m_altitude_ft = (int)(alt + 0.5);
+        entry.m_altitude_ft = (int)ceil(alt);
         entry.m_true_heading = hdg;
         entry.m_groundspeed_kts = gs;
         entry.m_vs_fpm = vs;
@@ -84,62 +86,62 @@ public:
                  const QString& cfg_file, FlightStatus* flightstatus);
 
     //! Destructor
-    virtual ~FSAccessMsFs();
+    ~FSAccessMsFs() override;
 
-    virtual Config* config() { return &m_cfg; }
+    Config* config() override { return &m_cfg; }
 
     //----- write access
 
     //! sets the NAV frequency, index 0 = NAV1, index 1 = NAV2
-    virtual bool setNavFrequency(int freq, uint nav_index);
+    bool setNavFrequency(int freq, uint nav_index) override;
     //! sets the ADF frequency, index 0 = ADF1, index 1 = ADF2
-    virtual bool setAdfFrequency(int freq, uint adf_index);
+    bool setAdfFrequency(int freq, uint adf_index) override;
     //! sets the OBS angle, index 0 = NAV1, index 1 = NAV2
-    virtual bool setNavOBS(int degrees, uint nav_index);
+    bool setNavOBS(int degrees, uint nav_index) override;
 
-    virtual bool setAutothrustArm(bool armed);
-    virtual bool setAutothrustSpeedHold(bool on);
-    virtual bool setAutothrustMachHold(bool on);
+    bool setAutothrustArm(bool armed) override;
+    bool setAutothrustSpeedHold(bool on) override;
+    bool setAutothrustMachHold(bool on) override;
 
-    virtual bool setFDOnOff(bool on);
-    virtual bool setAPOnOff(bool on);
-    virtual bool setAPHeading(double heading);
-    virtual bool setAPVs(int vs_ft_min);
-    virtual bool setAPAlt(unsigned int alt);
-    virtual bool setAPAirspeed(unsigned short speed_kts);
-    virtual bool setAPMach(double mach);
-    virtual bool setAPHeadingHold(bool on);
-    virtual bool setAPAltHold(bool on);
+    bool setFDOnOff(bool on) override;
+    bool setAPOnOff(bool on) override;
+    bool setAPHeading(double heading) override;
+    bool setAPVs(int vs_ft_min) override;
+    bool setAPAlt(unsigned int alt) override;
+    bool setAPAirspeed(unsigned short speed_kts) override;
+    bool setAPMach(double mach) override;
+    bool setAPHeadingHold(bool on) override;
+    bool setAPAltHold(bool on) override;
 
-    virtual bool setUTCTime(const QTime& utc_time);
-    virtual bool setUTCDate(const QDate& utc_date);
+    bool setUTCTime(const QTime& utc_time) override;
+    bool setUTCDate(const QDate& utc_date) override;
 
-    virtual bool freeThrottleAxes();
-    virtual bool setThrottle(double percent);
+    bool freeThrottleAxes() override;
+    bool setThrottle(double percent) override;
 
-    virtual bool setSBoxTransponder(bool on);
-    virtual bool setSBoxIdent();
-    virtual bool setFlaps(uint notch);
+    bool setSBoxTransponder(bool on) override;
+    bool setSBoxIdent() override;
+    bool setFlaps(uint notch) override;
 
-    virtual bool freeControlAxes();
-    virtual bool freeAileronAxis();
-    virtual bool freeElevatorAxis();
-    virtual bool setAileron(double percent);
-    virtual bool setElevator(double percent);
-    virtual bool setElevatorTrimPercent(double percent);
-    virtual bool setElevatorTrimDegrees(double degrees);
+    bool freeControlAxes() override;
+    bool freeAileronAxis() override;
+    bool freeElevatorAxis() override;
+    bool setAileron(double percent) override;
+    bool setElevator(double percent) override;
+    bool setElevatorTrimPercent(double percent) override;
+    bool setElevatorTrimDegrees(double degrees) override;
 
-    virtual bool freeSpoilerAxis();
-    virtual bool setSpoiler(double percent);
+    bool freeSpoilerAxis() override;
+    bool setSpoiler(double percent) override;
 
-    virtual bool setNAV1Arm(bool on);
-    virtual bool setAPPArm(bool on);
+    bool setNAV1Arm(bool on) override;
+    bool setAPPArm(bool on) override;
 
-    virtual bool setAltimeterHpa(const double& hpa);
+    bool setAltimeterHpa(const double& hpa) override;
 
-    virtual bool setPushback(PushBack status);
+    bool setPushback(PushBack status) override;
     
-    virtual void writeFMCStatusToSim(const FMCStatusData& fmc_status_data);
+    void writeFMCStatusToSim(const FMCStatusData& fmc_status_data) override;
 
 protected slots:
 
@@ -151,7 +153,7 @@ protected slots:
 
 protected:
 
-    void run();
+    //void run();
     bool checkLink();
     void setupRefreshTimer(bool pause_mode);
 
