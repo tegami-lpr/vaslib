@@ -64,7 +64,8 @@ if(CHARTS_SUPPORT)
 endif(CHARTS_SUPPORT)
 
 # The files constituting vaslib itself
-file(GLOB VASLIB_SOURCES vlassert.cpp config.cpp configwidget.cpp logger.cpp pushbutton.cpp mouse_input_area.cpp smoothing.cpp
+file(GLOB VASLIB_SOURCES messagebus/fmcmessagebus.cpp messagebus/eventqueue.cpp
+        vlassert.cpp config.cpp configwidget.cpp logger.cpp pushbutton.cpp mouse_input_area.cpp smoothing.cpp
         waypoint.cpp airport.cpp runway.cpp intersection.cpp ndb.cpp vor.cpp ils.cpp holding.cpp route.cpp airway.cpp procedure.cpp
         procedure_serialization.cpp sid.cpp star.cpp transition.cpp approach.cpp flightroute.cpp flightstatus.cpp fsaccess.cpp
         navcalc.cpp navdata.cpp geodata.cpp projection_mercator.cpp projection_greatcircle.cpp transport_layer_iface.cpp
@@ -72,7 +73,8 @@ file(GLOB VASLIB_SOURCES vlassert.cpp config.cpp configwidget.cpp logger.cpp pus
         containerbase.cpp infodlgimpl.cpp declination.cpp declination_geomag.cpp vas_path.cpp controller_throttle.cpp
         controller_speed.cpp fly_by_wire.cpp flight_mode_tracker.cpp statistics.cpp aircraft_data.cpp noise_generator.cpp
         vroute.cpp weather.cpp)
-file(GLOB VASLIB_HEADERS ptrlist.h vlassert.h config.h configwidget.h logger.h meanvalue.h median.h pushbutton.h
+file(GLOB VASLIB_HEADERS messagebus/fmcmessagebus.h messagebus/eventqueue.h
+        ptrlist.h vlassert.h config.h configwidget.h logger.h meanvalue.h median.h pushbutton.h
         mouse_input_area.h smoothing.h waypoint.h waypoint_hdg_to_alt.h waypoint_hdg_to_intercept.h airport.h
         runway.h intersection.h ndb.h vor.h ils.h holding.h route.h airway.h procedure.h procedure_serialization.h
         sid.h star.h transition.h approach.h flightroute.h flightstatus.h fsaccess.h navcalc.h navdata.h gshhs.h
@@ -81,6 +83,7 @@ file(GLOB VASLIB_HEADERS ptrlist.h vlassert.h config.h configwidget.h logger.h m
         containerbase.h infodlgimpl.h declination.h declination_geomag.h vas_path.h trend.h controller_base.h
         controller_throttle.h controller_speed.h fly_by_wire.h flight_mode_tracker.h statistics.h aircraft_data.h serialization_iface.h
         fmc_data_provider.h bithandling.h noise_generator.h vroute.h weather.h)
+
 file(GLOB VASLIB_UI infodlg.ui latlonpointdlg.ui pbdpointdlg.ui)
 
 set_source_files_properties(${PROJECT_NAME}.rc PROPERTIES LANGUAGE RC)
