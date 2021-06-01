@@ -21,19 +21,6 @@ public:
     int32_t m_messageType;
 };
 
-class FMCBusSubscriber : public QObject {
-    Q_OBJECT
-public:
-    QString SubscriberId();
-
-public slots:
-    virtual void ReceiveMessage(FMCMessage* message);
-protected:
-    void SetSubscriberId(const QString &id);
-private:
-    QString m_subscriberId;
-};
-
 //!Message bus for exchange data between components
 class FMCMessageBus {
 public:
@@ -46,7 +33,7 @@ public:
     //! Add message to the bus
     void PostMessage(FMCMessage *message);
     //! add new subscriber ot the bus
-    void Subscribe(FMCBusSubscriber *subscriber);
+    void Subscribe(QObject *subscriber, const QString& id);
 
 private:
     //! Constructor
@@ -62,7 +49,7 @@ private:
 
     //! Mutex for handle subscribers access
     std::mutex m_subscribersMutex;
-    QList<FMCBusSubscriber*> m_subscribers;
+    QList<QPair<QObject*, QString>> m_subscribers;
 
     //! Function for message bus loop
     void threadFunction();

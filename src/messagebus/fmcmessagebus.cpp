@@ -34,25 +34,6 @@ QString FMCMessage::Receiver() {
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 
-QString FMCBusSubscriber::SubscriberId() {
-    return m_subscriberId;
-}
-
-//--------------------------------------------------------------------------------------------------------------------//
-
-void FMCBusSubscriber::SetSubscriberId(const QString &id) {
-    m_subscriberId = id;
-}
-
-//--------------------------------------------------------------------------------------------------------------------//
-
-void FMCBusSubscriber::ReceiveMessage(FMCMessage *message) {
-
-}
-
-//--------------------------------------------------------------------------------------------------------------------//
-//--------------------------------------------------------------------------------------------------------------------//
-
 FMCMessageBus *FMCMessageBus::GetInstance() {
     if (m_instance == nullptr) {
         m_instance = new FMCMessageBus();
@@ -95,17 +76,23 @@ void FMCMessageBus::PostMessage(FMCMessage *message) {
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void FMCMessageBus::Subscribe(FMCBusSubscriber *subscriber) {
+void FMCMessageBus::Subscribe(QObject *subscriber, const QString& id) {
+    //Check if subscriber has slot with proper signature
+    int idx = subscriber->metaObject()->indexOfSlot("ReceiveMessage(FMCMessage*)");
+    MYASSERT(idx != -1);
+
     std::lock_guard<std::mutex> lk(m_subscribersMutex);
-    if (!m_subscribers.contains(subscriber)) {
-        m_subscribers.append(subscriber);
+    for (const auto& item : m_subscribers) {
+        if (item.first == subscriber) return;
     }
+    m_subscribers.append(qMakePair(subscriber, id));
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
 void FMCMessageBus::threadFunction() {
-    QList<FMCBusSubscriber*> receivers;
+    QList<QObject*> receivers;
+    std::unique_lock<std::mutex> lck(m_subscribersMutex, std::defer_lock);
     do {
         if (m_breakThreadMutex.try_lock()) {
             //if we can take mutex, then we must finish loop
@@ -116,21 +103,18 @@ void FMCMessageBus::threadFunction() {
         do {
             if (event == nullptr) break;
 
-            std::unique_lock<std::mutex> lck (m_subscribersMutex);
-            if (event->Receiver() == ANY_RECV) {
-                receivers.append(m_subscribers);
-                lck.unlock();
-            } else {
-                for (auto item : m_subscribers) {
-                    if (item->SubscriberId() == event->Receiver()) {
-                        receivers.append(item);
-                    }
+            lck.lock();
+            for (const auto& item : m_subscribers) {
+                if (event->Receiver() == ANY_RECV) {
+                    receivers.append(item.first);
+                    continue;
                 }
-                lck.unlock();
+                if (event->Receiver() != item.second) continue;
+                receivers.append(item.first);
             }
+            lck.unlock();
 
             for (auto receiver : receivers) {
-
                 QMetaObject::invokeMethod(receiver, "ReceiveMessage", Qt::QueuedConnection, Q_ARG(FMCMessage*, event));
             }
             receivers.clear();
