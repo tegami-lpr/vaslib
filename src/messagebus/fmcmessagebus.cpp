@@ -1,5 +1,6 @@
 #include "fmcmessagebus.h"
 #include "eventqueue.h"
+#include "logger.h"
 
 //--------------------------------------------------------------------------------------------------------------------//
 
@@ -73,6 +74,7 @@ FMCMessageBus::~FMCMessageBus() {
         //generate dummy message to unlock queue wait lock
         m_eventQueue->AddEvent(new FMCMessage(ANY_RECV, -1));
     }
+    delete m_eventQueue;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -82,6 +84,7 @@ void FMCMessageBus::Init() {
     m_breakThreadMutex.lock();
     //Start thread loop
     m_loopThread = new std::thread(&FMCMessageBus::threadFunction, this);
+    Logger::log("MessageBus inited");
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

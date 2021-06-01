@@ -64,7 +64,7 @@ if(CHARTS_SUPPORT)
 endif(CHARTS_SUPPORT)
 
 # The files constituting vaslib itself
-file(GLOB VASLIB_SOURCES messagebus/fmcmessagebus.cpp messagebus/eventqueue.cpp
+file(GLOB VASLIB_SOURCES messagebus/fmcmessagebus.cpp
         vlassert.cpp config.cpp configwidget.cpp logger.cpp pushbutton.cpp mouse_input_area.cpp smoothing.cpp
         waypoint.cpp airport.cpp runway.cpp intersection.cpp ndb.cpp vor.cpp ils.cpp holding.cpp route.cpp airway.cpp procedure.cpp
         procedure_serialization.cpp sid.cpp star.cpp transition.cpp approach.cpp flightroute.cpp flightstatus.cpp fsaccess.cpp
