@@ -10,16 +10,21 @@ template <class T> class NPEventQueue;
 
 class FMCMessage {
 public:
+    FMCMessage() = default;
     FMCMessage(QString sender, int32_t messageType);
     FMCMessage(QString sender, int32_t messageType, QString receiver);
+    //! Copy constructor
+    FMCMessage(const FMCMessage &other);
 
     QString Sender();
     QString Receiver();
 
     QString m_sender;
     QString m_receiver = ANY_RECV;
-    int32_t m_messageType;
+    int32_t m_messageType = -1;
 };
+Q_DECLARE_METATYPE(FMCMessage)
+
 
 //!Message bus for exchange data between components
 class FMCMessageBus {
@@ -31,9 +36,9 @@ public:
     void Init();
 
     //! Add message to the bus
-    void PostMessage(FMCMessage *message);
+    static void PutMessage(FMCMessage *message);
     //! add new subscriber ot the bus
-    void Subscribe(QObject *subscriber, const QString& id);
+    static void Subscribe(QObject *subscriber, const QString& id);
 
 private:
     //! Constructor

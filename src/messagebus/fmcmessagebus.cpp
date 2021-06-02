@@ -19,6 +19,12 @@ FMCMessage::FMCMessage(QString sender, int32_t messageType, QString receiver) {
     m_receiver = receiver;
 }
 
+FMCMessage::FMCMessage(const FMCMessage &other) {
+    m_sender = other.m_sender;
+    m_messageType = other.m_messageType;
+    m_receiver = other.m_receiver;
+}
+
 //--------------------------------------------------------------------------------------------------------------------//
 
 QString FMCMessage::Sender() {
@@ -44,6 +50,8 @@ FMCMessageBus *FMCMessageBus::GetInstance() {
 //--------------------------------------------------------------------------------------------------------------------//
 
 FMCMessageBus::FMCMessageBus() {
+    qRegisterMetaType<FMCMessage>("FMCMessage");
+    qRegisterMetaType<FMCMessage*>("FMCMessage*");
     m_loopThread = nullptr;
     m_eventQueue = new NPEventQueue<FMCMessage>();
 }
@@ -70,22 +78,27 @@ void FMCMessageBus::Init() {
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void FMCMessageBus::PostMessage(FMCMessage *message) {
-    m_eventQueue->AddEvent(message);
+void FMCMessageBus::PutMessage(FMCMessage *message) {
+    auto messageBus = GetInstance();
+    messageBus->m_eventQueue->AddEvent(message);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
 void FMCMessageBus::Subscribe(QObject *subscriber, const QString& id) {
+    auto messageBus = GetInstance();
+
     //Check if subscriber has slot with proper signature
     int idx = subscriber->metaObject()->indexOfSlot("ReceiveMessage(FMCMessage*)");
     MYASSERT(idx != -1);
 
-    std::lock_guard<std::mutex> lk(m_subscribersMutex);
-    for (const auto& item : m_subscribers) {
+    std::lock_guard<std::mutex> lk(messageBus->m_subscribersMutex);
+    for (const auto& item : messageBus->m_subscribers) {
         if (item.first == subscriber) return;
     }
-    m_subscribers.append(qMakePair(subscriber, id));
+    messageBus->m_subscribers.append(qMakePair(subscriber, id));
+
+    //TODO: subscribe to subscriber::destroyed() signal to remove objects from list
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -115,8 +128,11 @@ void FMCMessageBus::threadFunction() {
             lck.unlock();
 
             for (auto receiver : receivers) {
-                QMetaObject::invokeMethod(receiver, "ReceiveMessage", Qt::QueuedConnection, Q_ARG(FMCMessage*, event));
+                //XXX: spawn many copy of message is bad design, but for start it ok...
+                auto tmpMsg = new FMCMessage(*event);
+                QMetaObject::invokeMethod(receiver, "ReceiveMessage", Qt::QueuedConnection, Q_ARG(FMCMessage*, tmpMsg));
             }
+            delete event;
             receivers.clear();
         } while(false);
         std::this_thread::yield();
